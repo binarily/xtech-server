@@ -1,0 +1,18 @@
+create sequence hibernate_sequence start 1 increment 1;
+create table colour (id int8 not null, name varchar(255), device_id int8, segment_id int8, primary key (id));
+create table device (id int8 not null, callback_url varchar(255), name varchar(255), type int4, primary key (id));
+create table order$order_part (id int8 not null, quantity int8 not null, sku_id int8, primary key (id));
+create table orders (id int8 not null, created timestamp, state int4, total_amount numeric(19, 2), updated timestamp, colour_id int8, created_by_id int8, updated_by_id int8, primary key (id));
+create table orders_parts (orders_id int8 not null, parts_id int8 not null);
+create table segment (id int8 not null, taken boolean not null, device_id int8, primary key (id));
+create table sku (id int8 not null, amount numeric(19, 2), name varchar(255), primary key (id));
+alter table if exists orders_parts add constraint UK_tbw6iu6s1yxupiw9mikhhy0vo unique (parts_id);
+alter table if exists colour add constraint FKpq1f6adkt47yfd7tau779u1o foreign key (device_id) references device;
+alter table if exists colour add constraint FK2iauf3x0hquxbltrv3uqa5gfa foreign key (segment_id) references segment;
+alter table if exists order$order_part add constraint FKcxc7ykp7shjgrbop1pf55f3o5 foreign key (sku_id) references sku;
+alter table if exists orders add constraint FKeerp4ui8osvrmd354c5w3c0ng foreign key (colour_id) references colour;
+alter table if exists orders add constraint FK5wwx6a5vfcrfiy60hxr8hsapx foreign key (created_by_id) references device;
+alter table if exists orders add constraint FKjo50f8b9to1i6kbfr2ij2n15d foreign key (updated_by_id) references device;
+alter table if exists orders_parts add constraint FKrm54rh9q1ae4x6nf7gfxauhuk foreign key (parts_id) references order$order_part;
+alter table if exists orders_parts add constraint FK3evlt56x7fdrx767vv16p5txd foreign key (orders_id) references orders;
+alter table if exists segment add constraint FKed8x0422rikgu16tcqdy5a76s foreign key (device_id) references device;
