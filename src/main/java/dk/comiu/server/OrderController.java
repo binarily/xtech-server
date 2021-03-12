@@ -61,7 +61,7 @@ public class OrderController {
 
     //Used by counter device
     @PostMapping("/order/ready")
-    public OrderStatusResponse ready(@RequestHeader long deviceId, @RequestBody OrderId request) {
+    public OrderColourResponse ready(@RequestHeader long deviceId, @RequestBody OrderId request) {
         Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
         if (deviceOpt.isEmpty()) {
             return new OrderColourResponse(null, OrderStatus.INTERNAL_ERROR);
@@ -69,7 +69,7 @@ public class OrderController {
         Device device = deviceOpt.get();
         Either<OrderStatus, OrderColourResponse.OrderColour> readyResult
                 = orderService.markOrderAsReady(request, device);
-        return readyResult.fold(error -> new OrderStatusResponse(request, error),
+        return readyResult.fold(error -> new OrderColourResponse(request, error, null),
                 colour -> new OrderColourResponse(request, OrderStatus.OK, colour));
     }
 
